@@ -1,21 +1,21 @@
 let json;
-
+let actor;
 let temp = document.querySelector("template");
 
-let filter = "alle";
+let filter = "all";
 
 let listPointer = document.querySelector("#container");
 
 let buttonActive = document.querySelector("button.filter.active");
 console.log(buttonActive);
 
-document.addEventListener("DOMContentLoaded", hentdata);
+document.addEventListener("DOMContentLoaded", getData);
 
-const link = "actors.js";
+const link = "actors.json";
 
-async function hentdata() {
-    const respons = await fetch(link);
-    json = await respons.json();
+async function getData() {
+    const response = await fetch(link);
+    json = await response.json();
     addEventListenerToButtons();
     show(json);
 }
@@ -27,23 +27,31 @@ function show() {
     //løb igennem array "actors"
     json.forEach(actor => {
 
-        if (filter == "alle" || filter == actor.categories[0]) {
+        if (filter == "all" || filter == actor.info) {
             console.log(filter);
 
             const klon = temp.cloneNode(true).content;
+            klon.querySelector("h2").textContent = actor.fullname;
+            klon.querySelector(".movie").textContent = actor.movie;
 
-            klon.querySelector(".pic").src = actor.gsx$pic.$t;
-            klon.querySelector(".navn").textContent = fag.title.rendered;
-            klon.querySelector(".indhold").addEventListener("click", function() {
-                fagClick(fag.id)
-            });
+            klon.querySelector("article").addEventListener("click", () => showPopUp(actor));
 
+            listPointer.appendChild(klon);
+        };
     })
 }
 
-function fagClick(id) {
-    console.log("ID", id);
-    window.location.href = "singleview_fag.html?id=" + id;
+let popUp = document.querySelector("#popup");
+//Luk PopUppen ved click på luk
+document.querySelector("#luk").addEventListener("click", () => popup.style.display = "none");
+
+//Vis PopUppen i detaljer FRA API 
+function showPopUp(actor) {
+    console.log(actor);
+
+    popup.style.display = "block";
+    popup.querySelector("h2").textContent = actor.fullname;
+    popup.querySelector(".movie").textContent = actor.movie;
 }
 
 function addEventListenerToButtons() {
@@ -53,7 +61,7 @@ function addEventListenerToButtons() {
 }
 
 function filterBTNs() {
-    filter = this.dataset.fag;
+    filter = this.dataset.actor;
     document.querySelector("h1").textContent = this.innerHTML;
     document.querySelectorAll(".filter").forEach((btn) => {
         btn.classList.remove("active");
@@ -65,4 +73,4 @@ function filterBTNs() {
     show(json);
 }
 
-hentdata();
+getData();

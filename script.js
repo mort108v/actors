@@ -38,10 +38,7 @@ function show() {
                 fagClick(fag.id)
             });
 
-            listPointer.appendChild(klon);
-        }
     })
-
 }
 
 function fagClick(id) {
